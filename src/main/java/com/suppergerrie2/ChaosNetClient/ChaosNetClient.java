@@ -26,9 +26,10 @@ public class ChaosNetClient {
      * @author suppergerrie2
      * @param username The username to authorize with
      * @param password The password to authorize with
+     * @param saveCode save the refreshcode to use later //TODO: Not working yet
      * @throws IOException Thrown when the URL is not valid (Eg host {@link Constants#HOST} is invalid). Or when the post request fails.
      */
-    public void Authorize(String username, String password) throws IOException {
+    public void Authorize(String username, String password, boolean saveCode) throws IOException {
 
         if (accessToken != null || refreshToken != null) {
             System.out.println("Authorizing already authorized client!");
@@ -139,7 +140,7 @@ public class ChaosNetClient {
     }
 
     /**
-     * Add the Authorization header with the accessToken. Fails when not first authorized using {@link #Authorize(String, String)}
+     * Add the Authorization header with the accessToken. Fails when not first authorized using {@link #Authorize(String, String, boolean)} )}
      *
      * @author suppergerrie2
      * @param con The connection to authorize

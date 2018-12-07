@@ -22,7 +22,7 @@ public class ChaosNetClientTest {
     public void authorize() throws IOException {
         ChaosNetClient client = new ChaosNetClient();
 
-        client.Authorize(getUsername(), getPassword());
+        client.Authorize(getUsername(), getPassword(), false);
 
         assertNotNull("AccessToken should not be null!", client.accessToken);
         assertNotNull("RefreshToken should not be null!", client.refreshToken);
@@ -53,7 +53,7 @@ public class ChaosNetClientTest {
         ChaosNetClient client = new ChaosNetClient();
 
         System.out.println("Logging in!");
-        client.Authorize(getUsername(), getPassword());
+        client.Authorize(getUsername(), getPassword(), false);
 
         String randomName = getRandomName(10);
 
