@@ -29,23 +29,23 @@ public class ChaosNetClientTest {
     }
 
     String getUsername() {
-        String username = System.getProperty("username");
+        String username = System.getProperty("chaosnet_username");
 
         if(username!=null) {
             return username;
         }
 
-        return System.getenv("username");
+        return System.getenv("chaosnet_username");
     }
 
     String getPassword() {
-        String password = System.getProperty("password");
+        String password = System.getProperty("chaosnet_password");
 
         if(password!=null) {
             return password;
         }
 
-        return System.getenv("password");
+        return System.getenv("chaosnet_password");
     }
 
     @Test
@@ -66,7 +66,7 @@ public class ChaosNetClientTest {
 
         boolean found = false;
         for(TrainingRoom trainingRoom : result) {
-            if(trainingRoom.ownerName.equals(System.getProperty("username"))
+            if(trainingRoom.ownerName.equals(getUsername())
                 && trainingRoom.roomName.equals("Debug-"+randomName)
                 && trainingRoom.namespace.equals("client-test")) {
                 found = true;
