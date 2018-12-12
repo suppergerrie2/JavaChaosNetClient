@@ -19,6 +19,14 @@ TrainingRoom[] result = client.getTrainingRooms();
 
 ```
 
-#Installation
+# Installation
 
 For installation instructions go to [jitpack](https://jitpack.io/#suppergerrie2/JavaChaosNetClient) and select the version you want.
+
+# TODO:
+
+- [x] Login
+- [ ] Use refresh token
+- [ ] Ability to save login token
+- [ ] Manage session
+- [ ] Manage networks
