@@ -1,15 +1,11 @@
 package com.suppergerrie2.ChaosNetClient;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.suppergerrie2.ChaosNetClient.components.Session;
 import com.suppergerrie2.ChaosNetClient.components.TrainingRoom;
-import org.junit.After;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Random;
 
 import static org.junit.Assert.*;
@@ -22,13 +18,12 @@ public class ChaosNetClientTest {
     public void authorize() throws IOException {
         ChaosNetClient client = new ChaosNetClient();
 
-        client.Authorize(getUsername(), getPassword(), false);
+        client.authenticate(getUsername(), getPassword(), false);
 
-        assertNotNull("AccessToken should not be null!", client.accessToken);
-        assertNotNull("RefreshToken should not be null!", client.refreshToken);
+        assertTrue("Client not authenticated!", client.isAuthenticated());
     }
 
-    String getUsername() {
+    private String getUsername() {
         String username = System.getProperty("chaosnet_username");
 
         if(username!=null) {
@@ -38,7 +33,7 @@ public class ChaosNetClientTest {
         return System.getenv("chaosnet_username");
     }
 
-    String getPassword() {
+    private String getPassword() {
         String password = System.getProperty("chaosnet_password");
 
         if(password!=null) {
@@ -53,12 +48,12 @@ public class ChaosNetClientTest {
         ChaosNetClient client = new ChaosNetClient();
 
         System.out.println("Logging in!");
-        client.Authorize(getUsername(), getPassword(), false);
+        client.authenticate(getUsername(), getPassword(), false);
 
-        String randomName = getRandomName(10);
+        String name = "Debug-"+getRandomName(10);
 
-        System.out.println("Creating room with name: Debug-"+randomName);
-        assertTrue("Room creation failed!", client.createTrainingRoom(new TrainingRoom("Debug-"+randomName, "client-test")));
+        System.out.println("Creating room with name:" + name);
+        assertTrue("Room creation failed!", client.createTrainingRoom(new TrainingRoom(name, "client-test")));
 
         System.out.println("Checking if room was created!");
         TrainingRoom[] result = client.getTrainingRooms();
@@ -67,13 +62,17 @@ public class ChaosNetClientTest {
         boolean found = false;
         for(TrainingRoom trainingRoom : result) {
             if(trainingRoom.ownerName.equals(getUsername())
-                && trainingRoom.roomName.equals("Debug-"+randomName)
+                && trainingRoom.roomName.equals(name)
                 && trainingRoom.namespace.equals("client-test")) {
                 found = true;
             }
         }
 
         assertTrue("Created room not found! Result was: \n" + getArrayAsString(result), found);
+
+        TrainingRoom room = client.getTrainingRoom(getUsername(), "client-test");
+        assertNotNull("No room was found!", room);
+        assertEquals("Name did not match!", room.roomName, name);
     }
 
     /**
@@ -111,5 +110,29 @@ public class ChaosNetClientTest {
         }
 
         return name.toString();
+    }
+
+    @Test
+    public void startSession() throws IOException {
+        ChaosNetClient client = new ChaosNetClient();
+
+        client.authenticate(getUsername(), getPassword(), false);
+        String name = "Debug-"+getRandomName(10);
+
+        System.out.println("Creating room with name:" + name);
+        client.createTrainingRoom(new TrainingRoom(name, "client-test"));
+
+        TrainingRoom room = client.getTrainingRoom(getUsername(), "client-test");
+        Session session = client.startSession(room);
+
+        assertNotNull("Session is null!", session);
+
+        TrainingRoom sessionRoom = session.getTrainingRoom();
+        assertNotNull("Session's trainingroom was null!", sessionRoom);
+
+        assertEquals("Selected room and session room are not equal!", room, sessionRoom);
+        assertNotNull("Namespace was null!", session.getNamespace());
+        assertTrue("Session end time was < 0!", session.getSessionEndTime()>0);
+        assertNotNull("Session username was null!", session.getUsername());
     }
 }

@@ -1,6 +1,8 @@
 package com.suppergerrie2.ChaosNetClient;
 
 import com.google.gson.*;
+import com.suppergerrie2.ChaosNetClient.components.Authentication;
+import com.suppergerrie2.ChaosNetClient.components.Session;
 import com.suppergerrie2.ChaosNetClient.components.TrainingRoom;
 
 import java.io.BufferedWriter;
@@ -17,8 +19,7 @@ import java.net.URL;
  */
 public class ChaosNetClient {
 
-    String accessToken;
-    String refreshToken;
+    private Authentication auth;
 
     /**
      * Authorizes with the chaosnet server so this client can make authorized requests.
@@ -29,26 +30,24 @@ public class ChaosNetClient {
      * @param saveCode save the refreshcode to use later //TODO: Not working yet
      * @throws IOException Thrown when the URL is not valid (Eg host {@link Constants#HOST} is invalid). Or when the post request fails.
      */
-    public void Authorize(String username, String password, boolean saveCode) throws IOException {
-
-        if (accessToken != null || refreshToken != null) {
+    public void authenticate(String username, String password, boolean saveCode) throws IOException {
+        if (auth != null && auth.isAuthenticated()) {
             System.out.println("Authorizing already authorized client!");
         }
 
         URL url = new URL(Constants.HOST + "/v0/auth/login");
-
 
         JsonObject object = new JsonObject();
         object.addProperty("username", username);
         object.addProperty("password", password);
 
         JsonObject response = doPostRequest(url, object).getAsJsonObject();
-        accessToken = response.get("accessToken").getAsString();
-        refreshToken = response.get("refreshToken").getAsString();
+        Gson gson = new GsonBuilder().create();
+        this.auth = gson.fromJson(response, Authentication.class).setClient(this).setSaveRefreshToken(saveCode);
     }
 
     /**
-     * Creates a trainingRoom based on the trainingroom passed in. Needs the client to be authorized using {@link #Authorize} first.
+     * Creates a trainingRoom based on the trainingroom passed in. Needs the client to be authorized using {@link #authenticate} first.
      *
      * @author suppergerrie2
      * @param trainingRoom The trainingroom to create
@@ -85,6 +84,7 @@ public class ChaosNetClient {
      * @author suppergerrie2
      * @return An array of {@link TrainingRoom} with all of the trainingrooms found.
      */
+    @SuppressWarnings("WeakerAccess")
     public TrainingRoom[] getTrainingRooms() {
         try {
             JsonArray result = doGetRequest(new URL(Constants.HOST + "/v0/trainingrooms"), false).getAsJsonArray();
@@ -102,6 +102,53 @@ public class ChaosNetClient {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * Get a specific {@link TrainingRoom} from a specific user.
+     * @param username The owner's username
+     * @param namespace The {@link TrainingRoom}'s namespace
+     * @return The {@link TrainingRoom} with returned values set.
+     */
+    public TrainingRoom getTrainingRoom(String username, String namespace) {
+        try {
+            URL url = new URL(Constants.HOST + "/v0/" + username + "/trainingrooms/"+namespace);
+
+            JsonElement element = doGetRequest(url, true);
+            Gson gson = new GsonBuilder().create();
+            return gson.fromJson(element, TrainingRoom.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * Start session for the passed {@link TrainingRoom}
+     * @param room The trainingRoom to start the session on
+     * @return The {@link Session} object.
+     */
+    public Session startSession(TrainingRoom room) {
+        try {
+            URL url = new URL(Constants.HOST + "/v0/" + room.ownerName + "/trainingrooms/" + room.namespace + "/sessions/start");
+
+            JsonElement element = doPostRequest(url, null, true);
+            Gson gson = new GsonBuilder().create();
+            return gson.fromJson(element, Session.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * Check if this client is authenticated
+     * @return true if this client is authenticated
+     */
+    public boolean isAuthenticated() {
+        return auth.isAuthenticated();
     }
 
     /**
@@ -128,34 +175,21 @@ public class ChaosNetClient {
      * @return The result is wrapped in a jsonelement.
      * @throws IOException
      */
+    @SuppressWarnings("SameParameterValue")
     private JsonElement doGetRequest(URL url, boolean authorized) throws IOException {
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
 
         if(authorized) {
-            authorizeConnection(con);
+            auth.authenticateConnection(con);
         }
 
         return new JsonParser().parse(new InputStreamReader(con.getInputStream()));
     }
 
     /**
-     * Add the Authorization header with the accessToken. Fails when not first authorized using {@link #Authorize(String, String, boolean)} )}
-     *
-     * @author suppergerrie2
-     * @param con The connection to authorize
-     */
-    private void authorizeConnection(HttpURLConnection con) {
-        if (accessToken == null) {
-            System.err.println("Can't make an authorized request without accessToken!");
-            return;
-        }
-
-        con.setRequestProperty("Authorization", accessToken);
-    }
-
-    /**
-     * Do a post request to the given {@link URL} with the given {@link JsonObject} as body
+     * Do a post request to the given {@link URL} with the given {@link JsonObject} as body.
+     * If this client is authorized it will do an authorized post request. Use {@link #doPostRequest(URL, JsonObject, boolean)} for more control.
      *
      * @author suppergerrie2
      * @param url The URL to do the post request to
@@ -164,7 +198,7 @@ public class ChaosNetClient {
      * @throws IOException
      */
     private JsonElement doPostRequest(URL url, JsonObject body) throws IOException {
-        return doPostRequest(url, body, accessToken!=null);
+        return doPostRequest(url, body, auth!=null);
     }
 
     /**
@@ -173,23 +207,24 @@ public class ChaosNetClient {
      * @author suppergerrie2
      * @param url The URL to do the post request to
      * @param body The body to send with the post request.
-     * @param authorized If true this request will be authorized using {@link #authorizeConnection(HttpURLConnection)}
+     * @param authorized If true this request will be authorized using {@link Authentication#authenticateConnection(HttpURLConnection)}
      * @return The result of the post request as a {@link JsonElement}
      * @throws IOException
      */
-    private  JsonElement doPostRequest(URL url, JsonObject body, boolean authorized) throws IOException {
+    private JsonElement doPostRequest(URL url, JsonObject body, boolean authorized) throws IOException {
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("POST");
 
         if(authorized) {
-            authorizeConnection(con);
+            auth.authenticateConnection(con);
         }
         con.setRequestProperty("Content-Type", "application/json");
         con.setDoOutput(true);
 
-        writeToConnectionBody(body, con);
+        if(body!=null) {
+            writeToConnectionBody(body, con);
+        }
 
         return new JsonParser().parse(new InputStreamReader(con.getInputStream()));
     }
-
 }
