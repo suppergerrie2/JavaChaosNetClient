@@ -19,6 +19,7 @@ import java.net.URL;
  */
 public class ChaosNetClient {
 
+    private Gson gson = new GsonBuilder().create();
     private Authentication auth;
 
     /**
@@ -42,7 +43,6 @@ public class ChaosNetClient {
         object.addProperty("password", password);
 
         JsonObject response = doPostRequest(url, object).getAsJsonObject();
-        Gson gson = new GsonBuilder().create();
         this.auth = gson.fromJson(response, Authentication.class).setClient(this).setSaveRefreshToken(saveCode);
     }
 
@@ -58,19 +58,7 @@ public class ChaosNetClient {
         try {
             URL url = new URL(Constants.HOST + "/v0/trainingrooms");
 
-            JsonObject body = new JsonObject();
-            body.addProperty("name", trainingRoom.roomName);
-            body.addProperty("namespace", trainingRoom.namespace);
-
-            if(trainingRoom.partitionNamespace!=null) {
-                body.addProperty("partitionNamespace", trainingRoom.partitionNamespace);
-            }
-
-            if(trainingRoom.ownerName!=null) {
-                body.addProperty("owner_username", trainingRoom.ownerName);
-            }
-
-            doPostRequest(url, body, true);
+            doPostRequest(url, gson.toJsonTree(trainingRoom).getAsJsonObject(), true);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -91,8 +79,6 @@ public class ChaosNetClient {
 
             TrainingRoom[] trainingRooms = new TrainingRoom[result.size()];
 
-            Gson gson = new GsonBuilder().create();
-
             for(int i = 0; i < result.size(); i++) {
                 trainingRooms[i] = gson.fromJson(result.get(i).getAsJsonObject(), TrainingRoom.class);
             }
@@ -110,12 +96,13 @@ public class ChaosNetClient {
      * @param namespace The {@link TrainingRoom}'s namespace
      * @return The {@link TrainingRoom} with returned values set.
      */
+    @SuppressWarnings("WeakerAccess")
     public TrainingRoom getTrainingRoom(String username, String namespace) {
         try {
             URL url = new URL(Constants.HOST + "/v0/" + username + "/trainingrooms/"+namespace);
 
             JsonElement element = doGetRequest(url, true);
-            Gson gson = new GsonBuilder().create();
+
             return gson.fromJson(element, TrainingRoom.class);
         } catch (IOException e) {
             e.printStackTrace();
@@ -129,12 +116,13 @@ public class ChaosNetClient {
      * @param room The trainingRoom to start the session on
      * @return The {@link Session} object.
      */
+    @SuppressWarnings("WeakerAccess")
     public Session startSession(TrainingRoom room) {
         try {
             URL url = new URL(Constants.HOST + "/v0/" + room.ownerName + "/trainingrooms/" + room.namespace + "/sessions/start");
 
             JsonElement element = doPostRequest(url, null, true);
-            Gson gson = new GsonBuilder().create();
+
             return gson.fromJson(element, Session.class);
         } catch (IOException e) {
             e.printStackTrace();
@@ -147,6 +135,7 @@ public class ChaosNetClient {
      * Check if this client is authenticated
      * @return true if this client is authenticated
      */
+    @SuppressWarnings("WeakerAccess")
     public boolean isAuthenticated() {
         return auth.isAuthenticated();
     }
@@ -160,7 +149,6 @@ public class ChaosNetClient {
      * @throws IOException
      */
     private void writeToConnectionBody(JsonObject object, HttpURLConnection con) throws IOException {
-        Gson gson = new GsonBuilder().create();
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(con.getOutputStream()));
         writer.write(gson.toJson(object));
         writer.close();

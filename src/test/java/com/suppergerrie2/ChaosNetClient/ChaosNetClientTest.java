@@ -1,5 +1,6 @@
 package com.suppergerrie2.ChaosNetClient;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import com.suppergerrie2.ChaosNetClient.components.Session;
 import com.suppergerrie2.ChaosNetClient.components.TrainingRoom;
 import org.junit.FixMethodOrder;
@@ -44,7 +45,7 @@ public class ChaosNetClientTest {
     }
 
     @Test
-    public void trainingRooms() throws IOException {
+    public void trainingRooms() throws IOException, InvalidArgumentException {
         ChaosNetClient client = new ChaosNetClient();
 
         System.out.println("Logging in!");
@@ -53,7 +54,7 @@ public class ChaosNetClientTest {
         String name = "Debug-"+getRandomName(10);
 
         System.out.println("Creating room with name:" + name);
-        assertTrue("Room creation failed!", client.createTrainingRoom(new TrainingRoom(name, "client-test")));
+        assertTrue("Room creation failed!", client.createTrainingRoom(new TrainingRoom(name, "client-test", "chaoscraft")));
 
         System.out.println("Checking if room was created!");
         TrainingRoom[] result = client.getTrainingRooms();
@@ -63,13 +64,15 @@ public class ChaosNetClientTest {
         for(TrainingRoom trainingRoom : result) {
             if(trainingRoom.ownerName.equals(getUsername())
                 && trainingRoom.roomName.equals(name)
-                && trainingRoom.namespace.equals("client-test")) {
+                && trainingRoom.namespace.equals("client-test")
+                && trainingRoom.simulationModelNamespace.equals("chaoscraft")) {
                 found = true;
             }
         }
 
         assertTrue("Created room not found! Result was: \n" + getArrayAsString(result), found);
 
+        System.out.println("Checking if single room can be found!");
         TrainingRoom room = client.getTrainingRoom(getUsername(), "client-test");
         assertNotNull("No room was found!", room);
         assertEquals("Name did not match!", room.roomName, name);
@@ -101,7 +104,7 @@ public class ChaosNetClientTest {
      * @param length The length of the random string
      * @return A randomly generated name
      */
-    String getRandomName(int length) {
+    private String getRandomName(int length) {
         Random random = new Random();
 
         StringBuilder name = new StringBuilder();
@@ -113,14 +116,14 @@ public class ChaosNetClientTest {
     }
 
     @Test
-    public void startSession() throws IOException {
+    public void startSession() throws IOException, InvalidArgumentException {
         ChaosNetClient client = new ChaosNetClient();
 
         client.authenticate(getUsername(), getPassword(), false);
         String name = "Debug-"+getRandomName(10);
 
         System.out.println("Creating room with name:" + name);
-        client.createTrainingRoom(new TrainingRoom(name, "client-test"));
+        client.createTrainingRoom(new TrainingRoom(name, "client-test", "chaoscraft"));
 
         TrainingRoom room = client.getTrainingRoom(getUsername(), "client-test");
         Session session = client.startSession(room);
