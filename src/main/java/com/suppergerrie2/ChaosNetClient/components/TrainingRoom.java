@@ -1,7 +1,6 @@
 package com.suppergerrie2.ChaosNetClient.components;
 
 import com.google.gson.annotations.SerializedName;
-import com.sun.javaws.exceptions.InvalidArgumentException;
 
 public class TrainingRoom {
 
@@ -23,9 +22,9 @@ public class TrainingRoom {
     @SerializedName("simModelNamespace")
     public String simulationModelNamespace;
 
-    public TrainingRoom(String roomName, String namespace, String simulationModelNamespace) throws InvalidArgumentException {
+    public TrainingRoom(String roomName, String namespace, String simulationModelNamespace) throws IllegalArgumentException {
         if(roomName==null||namespace==null||simulationModelNamespace==null) {
-            throw new InvalidArgumentException(new String[] {roomName, namespace, simulationModelNamespace});
+            throw new IllegalArgumentException("Argument can not be null!");
         }
 
         this.roomName = roomName;
