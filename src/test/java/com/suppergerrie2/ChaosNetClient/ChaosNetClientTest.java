@@ -1,6 +1,5 @@
 package com.suppergerrie2.ChaosNetClient;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import com.suppergerrie2.ChaosNetClient.components.Session;
 import com.suppergerrie2.ChaosNetClient.components.TrainingRoom;
 import org.junit.FixMethodOrder;
@@ -45,7 +44,7 @@ public class ChaosNetClientTest {
     }
 
     @Test
-    public void trainingRooms() throws IOException, InvalidArgumentException {
+    public void trainingRooms() throws IOException {
         ChaosNetClient client = new ChaosNetClient();
 
         System.out.println("Logging in!");
@@ -116,7 +115,7 @@ public class ChaosNetClientTest {
     }
 
     @Test
-    public void startSession() throws IOException, InvalidArgumentException {
+    public void startSession() throws IOException {
         ChaosNetClient client = new ChaosNetClient();
 
         client.authenticate(getUsername(), getPassword(), false);
