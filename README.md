@@ -9,13 +9,16 @@ An example to login, create a trainingroom and get the trainingrooms:
 ChaosNetClient client = new ChaosNetClient();
 
 //Authorize with a username and password. Pass true if the refreshtoken should be saved (Not implemented yet)
-client.Authorize(getUsername(), getPassword(), false);
+client.authenticate(getUsername(), getPassword(), false);
 
 //Create a trainingroom with name "ExampleTrainingRoom" and in the "ExampleNamespace" namespace.
-client.createTrainingRoom(new TrainingRoom("ExampleTrainingRoom", "ExampleNamespace");
+client.createTrainingRoom(new TrainingRoom("ExampleTrainingRoom", "ExampleNamespace", "ExampleSimModelNamespace");
 
 //The results are in an array of trainingrooms, do with it what you want!
 TrainingRoom[] result = client.getTrainingRooms();
+
+//Or get a single trainingRoom
+TrainingRoom result = client.getTrainingRoom(getUsername(), "ExampleNamespace");
 
 ```
 
