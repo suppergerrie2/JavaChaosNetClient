@@ -4,8 +4,9 @@ import com.google.gson.annotations.SerializedName;
 
 public class Session {
 
-    @SerializedName("trainingRoom")
-    private TrainingRoom room;
+    //Session doesn't give a trainingRoom anymore, keeping this until I know this is intended
+//    @SerializedName("trainingRoom")
+//    private TrainingRoom room;
 
     @SerializedName("username")
     private String username;
@@ -16,9 +17,9 @@ public class Session {
     @SerializedName("ttl")
     private long sessionEndTime;
 
-    public TrainingRoom getTrainingRoom() {
-        return room;
-    }
+//    public TrainingRoom getTrainingRoom() {
+//        return room;
+//    }
 
     public String getUsername() {
         return username;
