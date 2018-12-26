@@ -2,8 +2,11 @@ package com.suppergerrie2.ChaosNetClient;
 
 import com.google.gson.*;
 import com.suppergerrie2.ChaosNetClient.components.Authentication;
+import com.suppergerrie2.ChaosNetClient.components.Organism;
 import com.suppergerrie2.ChaosNetClient.components.Session;
 import com.suppergerrie2.ChaosNetClient.components.TrainingRoom;
+import com.suppergerrie2.ChaosNetClient.components.nnet.BasicNeuron;
+import com.suppergerrie2.ChaosNetClient.components.nnet.NeuralNetwork;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -11,6 +14,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 
 /**
  * The ChaosNetClient which will hide all of the magic so you can for example call {@link #createTrainingRoom(TrainingRoom)} to create room.
@@ -21,6 +25,8 @@ public class ChaosNetClient {
 
     private Gson gson = new GsonBuilder().create();
     private Authentication auth;
+
+    HashMap<String, BasicNeuron> typeToClassMap = new HashMap<>();
 
     /**
      * Authorizes with the chaosnet server so this client can make authorized requests.
@@ -123,12 +129,71 @@ public class ChaosNetClient {
 
             JsonElement element = doPostRequest(url, null, true);
 
-            return gson.fromJson(element, Session.class);
+            Session session = gson.fromJson(element, Session.class);
+            session.setTrainingRoom(room);
+            return session;
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         return null;
+    }
+
+    public Organism[] getOrganisms(Session session) {
+        try {
+            URL url = new URL(Constants.HOST + "/v0/"+session.getTrainingRoom().ownerName+"/trainingrooms/"+session.getTrainingRoom().namespace+"/sessions/"+session.getNamespace()+"/next");
+
+            JsonElement element = doPostRequest(url, null, true);
+
+            JsonArray array = element.getAsJsonObject().getAsJsonArray("organisms");
+
+            Organism[] organisms = new Organism[array.size()];
+
+            for(int i = 0; i < array.size(); i++) {
+                organisms[i] = gson.fromJson(array.get(i), Organism.class);
+                parseNeuralNetwork(organisms[i], array.get(i).getAsJsonObject().getAsJsonObject("nNet"));
+            }
+
+            return organisms;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    void parseNeuralNetwork(Organism organism, JsonObject neuralNetwork) {
+        JsonArray neurons = neuralNetwork.getAsJsonArray("neurons");
+
+        NeuralNetwork network = new NeuralNetwork();
+
+        for(int i = 0; i < neurons.size(); i++) {
+            JsonObject neuronJson = neurons.get(i).getAsJsonObject();
+            String type = neuronJson.get("$TYPE").getAsString();
+
+            BasicNeuron neuronType = new BasicNeuron();
+            if(!typeToClassMap.containsKey(type)) {
+                System.err.println("Trying to find neuron type " + type + " but this type is not registered!");
+                System.err.println("Falling back to BasicNeuron!");
+            }  else {
+                neuronType = typeToClassMap.get(type);
+            }
+
+            BasicNeuron neuron = neuronType.parseFromJson(neuronJson);
+            network.addNeuron(neuron);
+        }
+
+        network.buildStructure();
+
+        organism.setNetwork(network);
+    }
+
+    public void registerNeuronType(String type, BasicNeuron neuron) {
+        if(this.typeToClassMap.containsKey(type)) {
+            System.out.println("Registering already registered neuron! Type being registered " + type);
+        }
+
+        this.typeToClassMap.put(type, neuron);
     }
 
     /**

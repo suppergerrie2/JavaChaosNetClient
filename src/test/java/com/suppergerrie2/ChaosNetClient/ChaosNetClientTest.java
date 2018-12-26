@@ -1,5 +1,6 @@
 package com.suppergerrie2.ChaosNetClient;
 
+import com.suppergerrie2.ChaosNetClient.components.Organism;
 import com.suppergerrie2.ChaosNetClient.components.Session;
 import com.suppergerrie2.ChaosNetClient.components.TrainingRoom;
 import org.junit.FixMethodOrder;
@@ -131,15 +132,31 @@ public class ChaosNetClientTest {
 
         assertNotNull("Session is null!", session);
 
-        //Session start doesn't give a training room anymore, idk if this is a bug so I'll keep this code until I know for sure
-//        TrainingRoom sessionRoom = session.getTrainingRoom();
-//        assertNotNull("Session's trainingroom was null!", sessionRoom);
-//
-//
-//        assertEquals("Selected room and session room are not equal!", room, sessionRoom);
-
         assertNotNull("Namespace was null!", session.getNamespace());
         assertTrue("Session end time was < 0!", session.getSessionEndTime() > 0);
         assertNotNull("Session username was null!", session.getUsername());
+    }
+
+    @Test
+    public void getOrganisms() throws IOException {
+        ChaosNetClient client = new ChaosNetClient();
+
+        client.authenticate(getUsername(), getPassword(), false);
+        String name = "Debug-" + getRandomName(10);
+
+        System.out.println("Creating room with name:" + name);
+        client.createTrainingRoom(new TrainingRoom(name, "client-test", "chaoscraft"));
+
+        TrainingRoom room = client.getTrainingRoom(getUsername(), "client-test");
+        Session session = client.startSession(room);
+
+        Organism[] organisms = client.getOrganisms(session);
+
+        assertNotNull("Organisms were null!", organisms);
+        assertTrue("No organisms returned?",organisms.length>0);
+
+        for(Organism organism : organisms) {
+            assertNotNull("Organism was null", organism);
+        }
     }
 }
