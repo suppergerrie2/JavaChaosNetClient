@@ -25,27 +25,27 @@ public class Organism {
     String trainingRoomNamespace;
 
     @SerializedName("namespace")
-    String namespace;
+    private String namespace;
 
     @SerializedName("name")
-    String name;
+    private String name;
 
     @SerializedName("generation")
-    int generation;
+    private int generation;
 
     @SerializedName("owner_username")
-    String ownerUsername;
+    private String ownerUsername;
 
     @SerializedName("speciesNamespace")
-    String speciesNamespace;
+    private String speciesNamespace;
 
-    transient NeuralNetwork neuralNetwork;
+    private transient NeuralNetwork neuralNetwork;
 
     @SerializedName("score")
-    Object score; //What type will this be?
+    private Object score; //What type will this be?
 
     @SerializedName("ttl")
-    double timeToLive;
+    private double timeToLive;
 
     public void setNetwork(NeuralNetwork neuralNetwork) {
         if(this.neuralNetwork!=null) {
@@ -59,17 +59,39 @@ public class Organism {
         return neuralNetwork.evaluate();
     }
 
-    @Override
-    public String toString() {
-        return "Organism: { \n    TrainingRoomNamepsace: " + trainingRoomNamespace +
-                "\n    namespace: " + namespace +
-                "\n    name: " + name +
-                "\n    generation: " + generation +
-                "\n    ownerUsername: " + ownerUsername +
-                "\n    speciesNamespace: " + speciesNamespace +
-                "\n    neuralNetwork: " + neuralNetwork +
-                "\n    score: " + score +
-                "\n    timeToLive: " + timeToLive +
-                "\n}";
+    public String getTrainingRoomNamespace() {
+        return trainingRoomNamespace;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getGeneration() {
+        return generation;
+    }
+
+    public String getOwnerUsername() {
+        return ownerUsername;
+    }
+
+    public String getSpeciesNamespace() {
+        return speciesNamespace;
+    }
+
+    public NeuralNetwork getNeuralNetwork() {
+        return neuralNetwork;
+    }
+
+    public Object getScore() {
+        return score;
+    }
+
+    public double getTimeToLive() {
+        return timeToLive;
     }
 }
