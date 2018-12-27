@@ -202,7 +202,7 @@ public class ChaosNetClient {
      */
     @SuppressWarnings("WeakerAccess")
     public boolean isAuthenticated() {
-        return auth.isAuthenticated();
+        return auth!=null && auth.isAuthenticated();
     }
 
     /**
