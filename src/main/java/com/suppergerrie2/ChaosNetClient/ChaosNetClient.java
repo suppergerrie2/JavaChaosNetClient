@@ -154,7 +154,7 @@ public class ChaosNetClient {
             for(int i = 0; i < array.size(); i++) {
                 organisms[i] = gson.fromJson(array.get(i), organismToUse.getClass());
                 parseNeuralNetwork(organisms[i], array.get(i).getAsJsonObject().getAsJsonObject("nNet"));
-                organisms[i].parseBiologyFromJson(array.get(i).getAsJsonObject().getAsJsonObject("biology"));
+                organisms[i].parseBiologyFromJson(array.get(i).getAsJsonObject().getAsJsonObject("nNet").getAsJsonObject("biology"));
             }
 
             return organisms;
