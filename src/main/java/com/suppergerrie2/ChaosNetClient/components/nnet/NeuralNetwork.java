@@ -1,6 +1,7 @@
 package com.suppergerrie2.ChaosNetClient.components.nnet;
 
 import com.google.gson.annotations.SerializedName;
+import com.suppergerrie2.ChaosNetClient.components.Organism;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,7 +47,12 @@ public class NeuralNetwork {
         }
     }
 
-    public BasicNeuron[] evaluate() {
+    public BasicNeuron[] evaluate(Organism owner) {
+
+        for(BasicNeuron neuron : outputs) {
+            neuron.value = neuron.getValue(owner);
+        }
+
         return outputs.toArray(new BasicNeuron[0]);
     }
 }

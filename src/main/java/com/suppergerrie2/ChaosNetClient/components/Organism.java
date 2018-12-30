@@ -59,7 +59,7 @@ public class Organism {
     public void parseBiologyFromJson(JsonObject object) { }
 
     public BasicNeuron[] evaluate() {
-        return neuralNetwork.evaluate();
+        return neuralNetwork.evaluate(this);
     }
 
     public String getTrainingRoomNamespace() {

@@ -3,6 +3,7 @@ package com.suppergerrie2.ChaosNetClient.components.nnet;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
+import com.suppergerrie2.ChaosNetClient.components.Organism;
 
 public class BasicNeuron {
 
@@ -52,7 +53,7 @@ public class BasicNeuron {
 //        return s.toString();
 //    }
 
-    public double getValue() {
+    public double getValue(Organism owner) {
         if(type.equals("input")) {
             return value;
         }
@@ -60,7 +61,7 @@ public class BasicNeuron {
         value = 0;
 
         for(Connection c : dependencies) {
-            value += c.getValue();
+            value += c.getValue(owner);
         }
 
         return sigmoid(value/=dependencies.length);

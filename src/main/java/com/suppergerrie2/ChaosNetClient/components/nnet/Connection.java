@@ -1,6 +1,7 @@
 package com.suppergerrie2.ChaosNetClient.components.nnet;
 
 import com.google.gson.annotations.SerializedName;
+import com.suppergerrie2.ChaosNetClient.components.Organism;
 
 public class Connection {
 
@@ -20,7 +21,7 @@ public class Connection {
                 "}";
     }
 
-    public double getValue() {
-        return neuron.getValue()*weight;
+    public double getValue(Organism owner) {
+        return neuron.getValue(owner)*weight;
     }
 }
