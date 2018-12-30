@@ -26,7 +26,7 @@ public class BasicNeuron {
     @SerializedName("id")
     public String id;
 
-    @SerializedName("type")
+    @SerializedName("$TYPE")
     String type;
 
     @SerializedName("_base_type")
