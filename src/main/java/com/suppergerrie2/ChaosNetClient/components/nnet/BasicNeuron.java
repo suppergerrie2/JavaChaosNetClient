@@ -74,4 +74,8 @@ public class BasicNeuron {
     public BasicNeuron parseFromJson(JsonObject object) {
         return new GsonBuilder().create().fromJson(object, getClass());
     }
+
+    public String getType() {
+        return type;
+    }
 }
