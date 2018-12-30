@@ -2,7 +2,6 @@ package com.suppergerrie2.ChaosNetClient.components;
 
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
-import com.suppergerrie2.ChaosNetClient.components.nnet.BasicNeuron;
 import com.suppergerrie2.ChaosNetClient.components.nnet.NeuralNetwork;
 
 public class Organism {
@@ -58,7 +57,7 @@ public class Organism {
 
     public void parseBiologyFromJson(JsonObject object) { }
 
-    public BasicNeuron[] evaluate() {
+    public NeuralNetwork.Output[] evaluate() {
         return neuralNetwork.evaluate(this);
     }
 

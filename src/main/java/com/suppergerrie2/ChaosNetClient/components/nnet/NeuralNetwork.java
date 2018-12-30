@@ -47,12 +47,25 @@ public class NeuralNetwork {
         }
     }
 
-    public BasicNeuron[] evaluate(Organism owner) {
+    public Output[] evaluate(Organism owner) {
 
-        for(BasicNeuron neuron : outputs) {
-            neuron.value = neuron.getValue(owner);
+        Output[] outputs = new Output[this.outputs.size()];
+
+        for(int i = 0; i < this.outputs.size(); i++) {
+            outputs[i] = new Output(this.outputs.get(i).type, this.outputs.get(i).getValue(owner));
         }
 
-        return outputs.toArray(new BasicNeuron[0]);
+        return outputs;
+    }
+
+    public class Output {
+        public final String type;
+        public final double value;
+
+        Output(String type, double value) {
+            this.type = type;
+            this.value = value;
+        }
     }
 }
+

@@ -64,7 +64,8 @@ public class BasicNeuron {
             value += c.getValue(owner);
         }
 
-        return sigmoid(value/=dependencies.length);
+        value = sigmoid(value/=dependencies.length);
+        return value;
     }
 
     double sigmoid(double in) {
@@ -75,7 +76,4 @@ public class BasicNeuron {
         return new GsonBuilder().create().fromJson(object, getClass());
     }
 
-    public String getType() {
-        return type;
-    }
 }
