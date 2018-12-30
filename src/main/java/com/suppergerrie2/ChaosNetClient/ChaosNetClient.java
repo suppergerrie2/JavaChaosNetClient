@@ -28,6 +28,8 @@ public class ChaosNetClient {
 
     HashMap<String, BasicNeuron> typeToClassMap = new HashMap<>();
 
+    Organism organismToUse = new Organism();
+
     /**
      * Authorizes with the chaosnet server so this client can make authorized requests.
      *
@@ -150,7 +152,7 @@ public class ChaosNetClient {
             Organism[] organisms = new Organism[array.size()];
 
             for(int i = 0; i < array.size(); i++) {
-                organisms[i] = gson.fromJson(array.get(i), Organism.class);
+                organisms[i] = gson.fromJson(array.get(i), organismToUse.getClass());
                 parseNeuralNetwork(organisms[i], array.get(i).getAsJsonObject().getAsJsonObject("nNet"));
                 organisms[i].parseBiologyFromJson(array.get(i).getAsJsonObject().getAsJsonObject("biology"));
             }
@@ -195,6 +197,10 @@ public class ChaosNetClient {
         }
 
         this.typeToClassMap.put(type, neuron);
+    }
+
+    public void registerCustomOrganismType(Organism organism) {
+        this.organismToUse = organism;
     }
 
     /**
