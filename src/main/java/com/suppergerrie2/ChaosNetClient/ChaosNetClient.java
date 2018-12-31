@@ -8,13 +8,11 @@ import com.suppergerrie2.ChaosNetClient.components.TrainingRoom;
 import com.suppergerrie2.ChaosNetClient.components.nnet.BasicNeuron;
 import com.suppergerrie2.ChaosNetClient.components.nnet.NeuralNetwork;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 /**
  * The ChaosNetClient which will hide all of the magic so you can for example call {@link #createTrainingRoom(TrainingRoom)} to create room.
@@ -244,7 +242,18 @@ public class ChaosNetClient {
             auth.authenticateConnection(con);
         }
 
-        return new JsonParser().parse(new InputStreamReader(con.getInputStream()));
+        if(con.getResponseCode()==200) {
+            return new JsonParser().parse(new InputStreamReader(con.getInputStream()));
+        } else {
+            System.err.println("----------------------------------------------------------------------------------");
+            System.err.print("Failed GET Request: ");
+            System.err.println(con.getResponseCode());
+            String result = new BufferedReader(new InputStreamReader(con.getErrorStream()))
+                    .lines().collect(Collectors.joining("\n"));
+            System.err.println(result);
+        }
+
+        return new JsonObject();
     }
 
     /**
@@ -285,6 +294,17 @@ public class ChaosNetClient {
             writeToConnectionBody(body, con);
         }
 
-        return new JsonParser().parse(new InputStreamReader(con.getInputStream()));
+        if(con.getResponseCode()==200) {
+            return new JsonParser().parse(new InputStreamReader(con.getInputStream()));
+        } else {
+            System.err.println("----------------------------------------------------------------------------------");
+            System.err.print("Failed POST Request: ");
+            System.err.println(con.getResponseCode());
+            String result = new BufferedReader(new InputStreamReader(con.getErrorStream()))
+                    .lines().collect(Collectors.joining("\n"));
+            System.err.println(result);
+        }
+
+        return new JsonObject();
     }
 }

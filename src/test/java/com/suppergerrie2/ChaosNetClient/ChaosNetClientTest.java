@@ -145,9 +145,9 @@ public class ChaosNetClientTest {
         String name = "Debug-" + getRandomName(10);
 
         System.out.println("Creating room with name:" + name);
-        client.createTrainingRoom(new TrainingRoom(name, "client-test", "chaoscraft"));
+        client.createTrainingRoom(new TrainingRoom(name, "client-test-2", "suppercraft"));
 
-        TrainingRoom room = client.getTrainingRoom(getUsername(), "client-test");
+        TrainingRoom room = client.getTrainingRoom(getUsername(), "client-test-2");
         Session session = client.startSession(room);
 
         Organism[] organisms = client.getOrganisms(session);
