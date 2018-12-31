@@ -76,4 +76,9 @@ public class BasicNeuron {
         return new GsonBuilder().create().fromJson(object, getClass());
     }
 
+    public NeuralNetwork.Output getOutput(Organism owner) {
+        NeuralNetwork.Output output = new NeuralNetwork.Output(this.type, this.getValue(owner));
+
+        return output;
+    }
 }

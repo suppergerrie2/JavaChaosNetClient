@@ -52,19 +52,26 @@ public class NeuralNetwork {
         Output[] outputs = new Output[this.outputs.size()];
 
         for(int i = 0; i < this.outputs.size(); i++) {
-            outputs[i] = new Output(this.outputs.get(i).type, this.outputs.get(i).getValue(owner));
+            outputs[i] = this.outputs.get(i).getOutput(owner);
+
         }
 
         return outputs;
     }
 
-    public class Output {
+    public static class Output {
         public final String type;
         public final double value;
+
+        HashMap<String, Object> extraData = new HashMap<>();
 
         Output(String type, double value) {
             this.type = type;
             this.value = value;
+        }
+
+        Object getExtraData(String key) {
+            return extraData.getOrDefault(key, null);
         }
     }
 }
