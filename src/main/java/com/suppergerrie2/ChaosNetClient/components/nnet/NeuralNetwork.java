@@ -63,7 +63,7 @@ public class NeuralNetwork {
         public final String type;
         public final double value;
 
-        HashMap<String, Object> extraData = new HashMap<>();
+        public HashMap<String, Object> extraData = new HashMap<>();
 
         Output(String type, double value) {
             this.type = type;
