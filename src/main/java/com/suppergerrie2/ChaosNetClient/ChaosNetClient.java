@@ -14,7 +14,12 @@ import com.suppergerrie2.ChaosNetClient.components.nnet.neurons.OutputNeuron;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -27,32 +32,69 @@ public class ChaosNetClient {
     private Gson gson = new GsonBuilder().create();
     private Authentication auth;
 
-    HashMap<String, AbstractNeuron> typeToClassMap = new HashMap<>();
+    private HashMap<String, AbstractNeuron> typeToClassMap = new HashMap<>();
 
-    Organism organismToUse = new Organism();
+    private Organism organismToUse = new Organism();
+
+    private boolean saveRefreshToken;
 
     /**
      * Authorizes with the chaosnet server so this client can make authorized requests.
      *
      * @param username The username to authorize with
      * @param password The password to authorize with
-     * @param saveCode save the refreshcode to use later //TODO: Not working yet
+     * @param useCode  If true an attempt will be made to load a refresh code, the refresh code will also be saved if no refresh code is found/
      * @throws IOException Thrown when the URL is not valid (Eg host {@link Constants#HOST} is invalid). Or when the post request fails.
      * @author suppergerrie2
      */
-    public void authenticate(String username, String password, boolean saveCode) throws IOException {
+    public void authenticate(String username, String password, boolean useCode) throws IOException {
         if (auth != null && auth.isAuthenticated()) {
             System.out.println("Authorizing already authorized client!");
         }
 
-        URL url = new URL(Constants.HOST + "/v0/auth/login");
 
-        JsonObject object = new JsonObject();
-        object.addProperty("username", username);
-        object.addProperty("password", password);
+        if (useCode) {
+            File file = new File("./.ChaosNet/data-" + username);
 
-        JsonObject response = doPostRequest(url, object).getAsJsonObject();
-        this.auth = gson.fromJson(response, Authentication.class).setClient(this).setSaveRefreshToken(saveCode);
+            if (file.exists()) {
+                List<String> lines = Files.readAllLines(file.toPath());
+
+                if (lines.get(0).equals(username)) {
+                    auth = new Authentication();
+                    auth.requestAuthToken(username, lines.get(1));
+                    saveRefreshCode();
+                    return;
+                }
+            }
+        }
+
+            URL url = new URL(Constants.HOST + "/v0/auth/login");
+
+            JsonObject object = new JsonObject();
+            object.addProperty("username", username);
+            object.addProperty("password", password);
+
+            JsonObject response = doPostRequest(url, object).getAsJsonObject();
+            this.auth = gson.fromJson(response, Authentication.class).setClient(this).setUserName(username);
+            this.saveRefreshToken = useCode;
+
+        saveRefreshCode();
+    }
+
+    public void saveRefreshCode() {
+        if (!saveRefreshToken) return;
+
+        File file = new File("./.ChaosNet/data-" + auth.getUserName());
+
+        List<String> lines = new ArrayList<>();
+        lines.add(auth.getUserName());
+        lines.add(auth.getRefreshToken());
+
+        try {
+            Files.write(file.toPath(), lines, Charset.forName("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -144,6 +186,7 @@ public class ChaosNetClient {
         return null;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public Organism[] getOrganisms(Session session) {
         try {
             URL url = new URL(Constants.HOST + "/v0/" + session.getTrainingRoom().ownerName + "/trainingrooms/" + session.getTrainingRoom().namespace + "/sessions/" + session.getNamespace() + "/next");
@@ -168,7 +211,7 @@ public class ChaosNetClient {
         return null;
     }
 
-    void parseNeuralNetwork(Organism organism, JsonObject neuralNetwork) {
+    private void parseNeuralNetwork(Organism organism, JsonObject neuralNetwork) {
         JsonArray neurons = neuralNetwork.getAsJsonArray("neurons");
 
         NeuralNetwork network = new NeuralNetwork();
@@ -298,7 +341,7 @@ public class ChaosNetClient {
      * @throws IOException
      * @author suppergerrie2
      */
-    private JsonElement doPostRequest(URL url, JsonObject body, boolean authorized) throws IOException {
+    public JsonElement doPostRequest(URL url, JsonObject body, boolean authorized) throws IOException {
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("POST");
 
