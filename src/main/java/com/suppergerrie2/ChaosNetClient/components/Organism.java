@@ -3,6 +3,7 @@ package com.suppergerrie2.ChaosNetClient.components;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 import com.suppergerrie2.ChaosNetClient.components.nnet.NeuralNetwork;
+import com.suppergerrie2.ChaosNetClient.components.nnet.neurons.OutputNeuron;
 
 public class Organism {
     /*
@@ -57,8 +58,8 @@ public class Organism {
 
     public void parseBiologyFromJson(JsonObject object) { }
 
-    public NeuralNetwork.Output[] evaluate() {
-        return neuralNetwork.evaluate(this);
+    public OutputNeuron[] evaluate() {
+        return neuralNetwork.evaluate();
     }
 
     public String getTrainingRoomNamespace() {

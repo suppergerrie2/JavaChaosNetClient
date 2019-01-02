@@ -1,7 +1,9 @@
 package com.suppergerrie2.ChaosNetClient.components.nnet;
 
 import com.google.gson.annotations.SerializedName;
-import com.suppergerrie2.ChaosNetClient.components.Organism;
+import com.suppergerrie2.ChaosNetClient.components.nnet.neurons.AbstractNeuron;
+import com.suppergerrie2.ChaosNetClient.components.nnet.neurons.InputNeuron;
+import com.suppergerrie2.ChaosNetClient.components.nnet.neurons.OutputNeuron;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,10 +12,10 @@ import java.util.List;
 public class NeuralNetwork {
 
     @SerializedName("neurons")
-    HashMap<String, BasicNeuron> neurons = new HashMap<>();
+    HashMap<String, AbstractNeuron> neurons = new HashMap<>();
 
-    List<BasicNeuron> outputs = new ArrayList<>();
-    List<BasicNeuron> inputs = new ArrayList<>();
+    List<OutputNeuron> outputs = new ArrayList<>();
+    List<InputNeuron> inputs = new ArrayList<>();
 
     @Override
     public String toString() {
@@ -29,34 +31,31 @@ public class NeuralNetwork {
         return builder.toString();
     }
 
-    public void addNeuron(BasicNeuron neuron) {
+    public void addNeuron(AbstractNeuron neuron) {
         this.neurons.put(neuron.id, neuron);
     }
 
     public void buildStructure() {
-        for(BasicNeuron neuron : neurons.values()) {
+        for(AbstractNeuron neuron : neurons.values()) {
             for(Connection neuronDependency : neuron.dependencies) {
                 neuronDependency.neuron = this.neurons.get(neuronDependency.in);
             }
 
-            if(neuron.baseType.equals("output")) {
-                outputs.add(neuron);
-            } else if (neuron.baseType.equals("input")) {
-                inputs.add(neuron);
+            if(neuron instanceof OutputNeuron) {
+                outputs.add((OutputNeuron) neuron);
+            } else if (neuron instanceof InputNeuron) {
+                inputs.add((InputNeuron) neuron);
             }
         }
     }
 
-    public Output[] evaluate(Organism owner) {
+    public OutputNeuron[] evaluate() {
 
-        Output[] outputs = new Output[this.outputs.size()];
-
-        for(int i = 0; i < this.outputs.size(); i++) {
-            outputs[i] = this.outputs.get(i).getOutput(owner);
-
+        for (OutputNeuron output : this.outputs) {
+            output.getValue();
         }
 
-        return outputs;
+        return outputs.toArray(new OutputNeuron[0]);
     }
 
     public static class Output {

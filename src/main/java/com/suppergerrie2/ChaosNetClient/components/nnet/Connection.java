@@ -1,14 +1,14 @@
 package com.suppergerrie2.ChaosNetClient.components.nnet;
 
 import com.google.gson.annotations.SerializedName;
-import com.suppergerrie2.ChaosNetClient.components.Organism;
+import com.suppergerrie2.ChaosNetClient.components.nnet.neurons.AbstractNeuron;
 
 public class Connection {
 
     @SerializedName("neuronId")
     String in;
 
-    BasicNeuron neuron;
+    AbstractNeuron neuron;
 
     @SerializedName("weight")
     double weight;
@@ -21,7 +21,7 @@ public class Connection {
                 "}";
     }
 
-    public double getValue(Organism owner) {
-        return neuron.getValue(owner)*weight;
+    public double getValue() {
+        return neuron.getValue()*weight;
     }
 }
