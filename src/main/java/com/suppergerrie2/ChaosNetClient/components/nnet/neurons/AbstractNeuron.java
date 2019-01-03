@@ -32,6 +32,10 @@ public abstract class AbstractNeuron {
 
     public abstract AbstractNeuron parseFromJson(JsonObject object);
 
+    public Organism getOwner() {
+        return owner;
+    }
+
     double sigmoid(double in) {
         return (1) / (1 + Math.exp(-in));
     }
