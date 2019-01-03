@@ -240,7 +240,7 @@ public class ChaosNetClient {
                 neuronType = typeToClassMap.get(type);
             }
 
-            AbstractNeuron neuron = neuronType.parseFromJson(neuronJson);
+            AbstractNeuron neuron = neuronType.parseFromJson(neuronJson, organism);
             network.addNeuron(neuron);
         }
 

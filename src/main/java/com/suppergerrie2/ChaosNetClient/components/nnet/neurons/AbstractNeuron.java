@@ -2,6 +2,7 @@ package com.suppergerrie2.ChaosNetClient.components.nnet.neurons;
 
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
+import com.suppergerrie2.ChaosNetClient.components.Organism;
 import com.suppergerrie2.ChaosNetClient.components.nnet.Connection;
 
 public abstract class AbstractNeuron {
@@ -13,14 +14,21 @@ public abstract class AbstractNeuron {
     String type;
 
     @SerializedName("_base_type")
-    public
-    String baseType;
+    public String baseType;
 
     @SerializedName("dependencies")
-    public
-    Connection[] dependencies;
+    public Connection[] dependencies;
+
+    Organism owner;
 
     public abstract double getValue();
+
+    public final AbstractNeuron parseFromJson(JsonObject object, Organism organism) {
+
+        this.owner = organism;
+
+        return parseFromJson(object);
+    }
 
     public abstract AbstractNeuron parseFromJson(JsonObject object);
 
