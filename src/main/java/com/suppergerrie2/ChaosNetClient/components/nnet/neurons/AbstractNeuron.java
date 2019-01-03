@@ -19,7 +19,7 @@ public abstract class AbstractNeuron {
     @SerializedName("dependencies")
     public Connection[] dependencies;
 
-    Organism owner;
+    private Organism owner;
 
     public abstract double getValue();
 
@@ -34,6 +34,10 @@ public abstract class AbstractNeuron {
 
     public Organism getOwner() {
         return owner;
+    }
+
+    public String getType() {
+        return type;
     }
 
     double sigmoid(double in) {

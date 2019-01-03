@@ -24,4 +24,5 @@ public class OutputNeuron extends AbstractNeuron {
     public AbstractNeuron parseFromJson(JsonObject object) {
         return new GsonBuilder().create().fromJson(object, getClass());
     }
+
 }
