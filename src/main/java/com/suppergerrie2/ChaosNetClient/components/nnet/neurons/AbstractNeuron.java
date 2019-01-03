@@ -25,9 +25,10 @@ public abstract class AbstractNeuron {
 
     public final AbstractNeuron parseFromJson(JsonObject object, Organism organism) {
 
-        this.owner = organism;
+        AbstractNeuron neuron = parseFromJson(object);
+        neuron.owner = organism;
 
-        return parseFromJson(object);
+        return neuron;
     }
 
     public abstract AbstractNeuron parseFromJson(JsonObject object);
