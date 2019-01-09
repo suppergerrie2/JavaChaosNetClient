@@ -91,6 +91,7 @@ public class ChaosNetClient {
         lines.add(auth.getRefreshToken());
 
         try {
+            Files.createDirectories(file.toPath());
             Files.write(file.toPath(), lines, Charset.forName("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
