@@ -49,7 +49,7 @@ public class ChaosNetClientTest {
         ChaosNetClient client = new ChaosNetClient();
 
         System.out.println("Logging in!");
-        client.authenticate(getUsername(), getPassword(), false);
+        client.authenticate(getUsername(), getPassword(), true);
 
         String name = "Debug-" + getRandomName(10);
 
@@ -121,7 +121,7 @@ public class ChaosNetClientTest {
     public void startSession() throws IOException {
         ChaosNetClient client = new ChaosNetClient();
 
-        client.authenticate(getUsername(), getPassword(), false);
+        client.authenticate(getUsername(), getPassword(), true);
         String name = "Debug-" + getRandomName(10);
 
         System.out.println("Creating room with name:" + name);
@@ -141,7 +141,7 @@ public class ChaosNetClientTest {
     public void getOrganisms() throws IOException {
         ChaosNetClient client = new ChaosNetClient();
 
-        client.authenticate(getUsername(), getPassword(), false);
+        client.authenticate(getUsername(), getPassword(), true);
         String name = "Debug-" + getRandomName(10);
 
         System.out.println("Creating room with name:" + name);

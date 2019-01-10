@@ -37,6 +37,17 @@ public class ChaosNetClient {
     private Organism organismToUse = new Organism();
 
     private boolean saveRefreshToken;
+    private boolean saveSessions = true;
+
+    FileHelper fileHelper;
+
+    {
+        try {
+            fileHelper = new FileHelper("chaosnet");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Authorizes with the chaosnet server so this client can make authorized requests.
@@ -55,7 +66,8 @@ public class ChaosNetClient {
 
         if (useCode) {
             File file = new File("./.ChaosNet/data-" + username);
-
+            //TODO: Switch to filehelper, this is broken
+            System.out.println(file.getAbsolutePath());
             if (file.exists()) {
                 List<String> lines = Files.readAllLines(file.toPath());
 
@@ -172,13 +184,26 @@ public class ChaosNetClient {
      */
     @SuppressWarnings("WeakerAccess")
     public Session startSession(TrainingRoom room) {
+
+        System.out.println("Trying to load session...");
+        Session session = Session.loadFromFile(room, auth.getUserName(), fileHelper);
+
+        if (session != null) {
+            System.out.println("Loaded session from file!");
+            if (session.isValid()) {
+                return session;
+            }
+        }
+
+        System.out.println("No session loaded, creating session...");
         try {
             URL url = new URL(Constants.HOST + "/v0/" + room.ownerName + "/trainingrooms/" + room.namespace + "/sessions/start");
 
             JsonElement element = doPostRequest(url, null, true);
 
-            Session session = gson.fromJson(element, Session.class);
+            session = gson.fromJson(element, Session.class);
             session.setTrainingRoom(room);
+            session.saveToFile(fileHelper);
             return session;
         } catch (IOException e) {
             e.printStackTrace();
