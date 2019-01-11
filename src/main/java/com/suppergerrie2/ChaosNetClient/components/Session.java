@@ -93,6 +93,6 @@ public class Session {
     }
 
     public boolean isValid() {
-        return sessionEndTime <= System.currentTimeMillis() / 1000L;
+        return sessionEndTime > System.currentTimeMillis() / 1000L;
     }
 }

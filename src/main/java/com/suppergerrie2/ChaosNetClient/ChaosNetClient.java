@@ -14,12 +14,7 @@ import com.suppergerrie2.ChaosNetClient.components.nnet.neurons.OutputNeuron;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -59,36 +54,33 @@ public class ChaosNetClient {
      * @author suppergerrie2
      */
     public void authenticate(String username, String password, boolean useCode) throws IOException {
+        this.saveRefreshToken = useCode;
         if (auth != null && auth.isAuthenticated()) {
             System.out.println("Authorizing already authorized client!");
         }
 
-
         if (useCode) {
-            File file = new File("./.ChaosNet/data-" + username);
-            //TODO: Switch to filehelper, this is broken
-            System.out.println(file.getAbsolutePath());
-            if (file.exists()) {
-                List<String> lines = Files.readAllLines(file.toPath());
+            try {
+                JsonObject fileData = fileHelper.loadAsJson("data-" + username + ".json").getAsJsonObject();
 
-                if (lines.get(0).equals(username)) {
-                    auth = new Authentication();
-                    auth.requestAuthToken(username, lines.get(1));
-                    saveRefreshCode();
+                if (fileData != null && fileData.has("refreshToken")) {
+                    auth = new Authentication().setClient(this).setUserName(username);
+                    auth.requestAuthToken(username, fileData.get("refreshToken").getAsString());
                     return;
                 }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
             }
         }
 
-            URL url = new URL(Constants.HOST + "/v0/auth/login");
+        URL url = new URL(Constants.HOST + "/v0/auth/login");
 
-            JsonObject object = new JsonObject();
-            object.addProperty("username", username);
-            object.addProperty("password", password);
+        JsonObject object = new JsonObject();
+        object.addProperty("username", username);
+        object.addProperty("password", password);
 
-            JsonObject response = doPostRequest(url, object).getAsJsonObject();
-            this.auth = gson.fromJson(response, Authentication.class).setClient(this).setUserName(username);
-            this.saveRefreshToken = useCode;
+        JsonObject response = doPostRequest(url, object).getAsJsonObject();
+        this.auth = gson.fromJson(response, Authentication.class).setClient(this).setUserName(username);
 
         saveRefreshCode();
     }
@@ -96,15 +88,11 @@ public class ChaosNetClient {
     public void saveRefreshCode() {
         if (!saveRefreshToken) return;
 
-        File file = new File("./.ChaosNet/data-" + auth.getUserName());
-
-        List<String> lines = new ArrayList<>();
-        lines.add(auth.getUserName());
-        lines.add(auth.getRefreshToken());
-
+        JsonObject object = new JsonObject();
+        object.addProperty("username", auth.getUserName());
+        object.addProperty("refreshToken", auth.getRefreshToken());
         try {
-            Files.createDirectories(file.toPath());
-            Files.write(file.toPath(), lines, Charset.forName("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+            fileHelper.saveJson("data-" + auth.getUserName() + ".json", object);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -190,6 +178,7 @@ public class ChaosNetClient {
 
         if (session != null) {
             System.out.println("Loaded session from file!");
+            System.out.println("Session is " + (session.isValid() ? "valid" : "invalid"));
             if (session.isValid()) {
                 return session;
             }
