@@ -3,7 +3,6 @@ package com.suppergerrie2.ChaosNetClient.components;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
-import com.sun.istack.internal.Nullable;
 
 import java.util.HashMap;
 
@@ -79,7 +78,6 @@ public class TrainingRoom {
         this.stats = stats;
     }
 
-    @Nullable
     public TrainingRoomStats getStats() {
         return stats;
     }
