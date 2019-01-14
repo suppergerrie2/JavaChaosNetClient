@@ -43,7 +43,7 @@ public class Organism {
     private transient NeuralNetwork neuralNetwork;
 
     @SerializedName("score")
-    private Object score; //What type will this be?
+    private double score;
 
     @SerializedName("ttl")
     private double timeToLive;
@@ -90,11 +90,15 @@ public class Organism {
         return neuralNetwork;
     }
 
-    public Object getScore() {
+    public double getScore() {
         return score;
     }
 
     public double getTimeToLive() {
         return timeToLive;
+    }
+
+    public void increaseScore(double amount) {
+        score += amount;
     }
 }

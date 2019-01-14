@@ -203,8 +203,27 @@ public class ChaosNetClient {
 
     @SuppressWarnings("WeakerAccess")
     public Organism[] getOrganisms(Session session) {
+        return getOrganisms(session, new Organism[0]);
+    }
+
+    public Organism[] getOrganisms(Session session, Organism[] testedOrganisms) {
         try {
             URL url = new URL(Constants.HOST + "/v0/" + session.getTrainingRoom().ownerName + "/trainingrooms/" + session.getTrainingRoom().namespace + "/sessions/" + session.getNamespace() + "/next");
+
+            JsonObject body = null;
+
+            if (testedOrganisms.length > 0) {
+                body = new JsonObject();
+                JsonArray toReport = new JsonArray();
+                for (Organism organism : testedOrganisms) {
+                    JsonObject organismObject = new JsonObject();
+                    organismObject.addProperty("namespace", organism.getNamespace());
+                    organismObject.addProperty("score", organism.getScore());
+                    toReport.add(organismObject);
+                }
+                body.add("report", toReport);
+            }
+
 
             JsonElement element = doPostRequest(url, null, true);
 
