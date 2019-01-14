@@ -26,7 +26,7 @@ public class TrainingRoom {
     @SerializedName("simModelNamespace")
     public String simulationModelNamespace;
 
-    transient HashMap<String, Integer> fitnessRules;
+    transient HashMap<String, Double> fitnessRules;
 
     TrainingRoomStats stats = null;
 
@@ -82,6 +82,10 @@ public class TrainingRoom {
         return stats;
     }
 
+    public double getScoreEffect(String event) {
+        return this.fitnessRules.containsKey(event) ? this.fitnessRules.get(event) : 0;
+    }
+
     public void parseFitnessRules(JsonArray fitnessRules) {
         if (fitnessRules == null) {
             System.out.println("Fitness rules is null!");
@@ -89,7 +93,7 @@ public class TrainingRoom {
         }
         for (int i = 0; i < fitnessRules.size(); i++) {
             JsonObject fitnessRule = fitnessRules.get(i).getAsJsonObject();
-            this.fitnessRules.put(fitnessRule.get("eventType").getAsString(), fitnessRule.get("scoreEffect").getAsInt());
+            this.fitnessRules.put(fitnessRule.get("eventType").getAsString(), fitnessRule.get("scoreEffect").getAsDouble());
         }
     }
 }
