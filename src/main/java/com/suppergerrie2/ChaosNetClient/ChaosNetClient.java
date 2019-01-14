@@ -1,10 +1,7 @@
 package com.suppergerrie2.ChaosNetClient;
 
 import com.google.gson.*;
-import com.suppergerrie2.ChaosNetClient.components.Authentication;
-import com.suppergerrie2.ChaosNetClient.components.Organism;
-import com.suppergerrie2.ChaosNetClient.components.Session;
-import com.suppergerrie2.ChaosNetClient.components.TrainingRoom;
+import com.suppergerrie2.ChaosNetClient.components.*;
 import com.suppergerrie2.ChaosNetClient.components.nnet.NeuralNetwork;
 import com.suppergerrie2.ChaosNetClient.components.nnet.neurons.AbstractNeuron;
 import com.suppergerrie2.ChaosNetClient.components.nnet.neurons.HiddenNeuron;
@@ -156,7 +153,10 @@ public class ChaosNetClient {
 
             JsonElement element = doGetRequest(url, true);
 
-            return gson.fromJson(element, TrainingRoom.class);
+            TrainingRoom room = gson.fromJson(element, TrainingRoom.class);
+            room.parseFitnessRules(element.getAsJsonObject().getAsJsonArray("fitnessRules"));
+
+            return room;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -217,6 +217,9 @@ public class ChaosNetClient {
                 parseNeuralNetwork(organisms[i], array.get(i).getAsJsonObject().getAsJsonObject("nNet"));
                 organisms[i].parseBiologyFromJson(array.get(i).getAsJsonObject().getAsJsonObject("nNet").getAsJsonObject("biology"));
             }
+
+            TrainingRoomStats stats = gson.fromJson(element.getAsJsonObject().getAsJsonObject("stats"), TrainingRoomStats.class);
+            session.getTrainingRoom().setStats(stats);
 
             return organisms;
         } catch (IOException e) {

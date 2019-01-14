@@ -152,6 +152,8 @@ public class ChaosNetClientTest {
 
         Organism[] organisms = client.getOrganisms(session);
 
+        System.out.println(session.getTrainingRoom().getStats().toString());
+
         assertNotNull("Organisms were null!", organisms);
         assertTrue("No organisms returned?",organisms.length>0);
 

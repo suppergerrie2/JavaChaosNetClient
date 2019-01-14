@@ -1,6 +1,11 @@
 package com.suppergerrie2.ChaosNetClient.components;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
+import com.sun.istack.internal.Nullable;
+
+import java.util.HashMap;
 
 public class TrainingRoom {
 
@@ -21,6 +26,10 @@ public class TrainingRoom {
 
     @SerializedName("simModelNamespace")
     public String simulationModelNamespace;
+
+    transient HashMap<String, Integer> fitnessRules;
+
+    TrainingRoomStats stats = null;
 
     public TrainingRoom(String roomName, String namespace, String simulationModelNamespace) throws IllegalArgumentException {
         if(roomName==null||namespace==null||simulationModelNamespace==null) {
@@ -64,6 +73,26 @@ public class TrainingRoom {
                 && namespace.equals(otherRoom.namespace)
                 && partitionNamespace.equals(otherRoom.partitionNamespace);
 
+    }
+
+    public void setStats(TrainingRoomStats stats) {
+        this.stats = stats;
+    }
+
+    @Nullable
+    public TrainingRoomStats getStats() {
+        return stats;
+    }
+
+    public void parseFitnessRules(JsonArray fitnessRules) {
+        if (fitnessRules == null) {
+            System.out.println("Fitness rules is null!");
+            return;
+        }
+        for (int i = 0; i < fitnessRules.size(); i++) {
+            JsonObject fitnessRule = fitnessRules.get(i).getAsJsonObject();
+            this.fitnessRules.put(fitnessRule.get("eventType").getAsString(), fitnessRule.get("scoreEffect").getAsInt());
+        }
     }
 }
 
