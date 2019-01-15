@@ -26,7 +26,7 @@ public class TrainingRoom {
     @SerializedName("simModelNamespace")
     public String simulationModelNamespace;
 
-    transient HashMap<String, Double> fitnessRules;
+    transient HashMap<String, Double> fitnessRules = new HashMap<>();
 
     TrainingRoomStats stats = null;
 
