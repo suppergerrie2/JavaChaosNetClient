@@ -91,6 +91,11 @@ public class TrainingRoom {
             System.out.println("Fitness rules is null!");
             return;
         }
+
+        if (this.fitnessRules == null) {
+            this.fitnessRules = new HashMap<>();
+        }
+
         for (int i = 0; i < fitnessRules.size(); i++) {
             JsonObject fitnessRule = fitnessRules.get(i).getAsJsonObject();
             this.fitnessRules.put(fitnessRule.get("eventType").getAsString(), fitnessRule.get("scoreEffect").getAsDouble());
