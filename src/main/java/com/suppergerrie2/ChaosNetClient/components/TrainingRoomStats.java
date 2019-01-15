@@ -17,4 +17,16 @@ public class TrainingRoomStats {
     public String toString() {
         return "TotalOrganismsPerGeneration: " + totalOrganismsPerGeneration + " organismsSpawnedSoFar " + organismsSpawnedSoFar + " progress " + generationProgress + " %";
     }
+
+    public int getTotalOrganismsPerGeneration() {
+        return totalOrganismsPerGeneration;
+    }
+
+    public int getOrganismsSpawnedSoFar() {
+        return organismsSpawnedSoFar;
+    }
+
+    public double getGenerationProgress() {
+        return generationProgress;
+    }
 }
