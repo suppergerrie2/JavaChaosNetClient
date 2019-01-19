@@ -207,6 +207,7 @@ public class ChaosNetClient {
             System.out.println("Loaded session from file!");
             System.out.println("Session is " + (session.isValid() ? "valid" : "invalid"));
             if (session.isValid()) {
+                session.setTrainingRoom(room);
                 return session;
             }
         }
