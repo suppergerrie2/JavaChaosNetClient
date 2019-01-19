@@ -76,6 +76,8 @@ public class ChaosNetClientTest {
         TrainingRoom room = client.getTrainingRoom(getUsername(), "client-test");
         assertNotNull("No room was found!", room);
         assertEquals("Name did not match!", room.roomName, name);
+
+        client.getTrainingRoom("suppergerrie2", "supper-pong");
     }
 
     /**

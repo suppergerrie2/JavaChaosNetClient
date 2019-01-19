@@ -24,6 +24,8 @@ public class ChaosNetClient {
     private Gson gson = new GsonBuilder().create();
     private Authentication auth;
 
+    private HashMap<String, TrainingRoom> trainingRoomByNamespace = new HashMap<>();
+
     private HashMap<String, AbstractNeuron> typeToClassMap = new HashMap<>();
 
     private Organism organismToUse = new Organism();
@@ -129,7 +131,24 @@ public class ChaosNetClient {
             TrainingRoom[] trainingRooms = new TrainingRoom[result.size()];
 
             for (int i = 0; i < result.size(); i++) {
-                trainingRooms[i] = gson.fromJson(result.get(i).getAsJsonObject(), TrainingRoom.class);
+                String nameSpace = result.get(i).getAsJsonObject().get("namespace").getAsString();
+
+                TrainingRoom receivedRoom = gson.fromJson(result.get(i).getAsJsonObject(), TrainingRoom.class);
+
+                if (result.get(i).getAsJsonObject().has("fitnessRules")) {
+                    if (result.get(i).getAsJsonObject().get("fitnessRules").isJsonArray()) {
+                        receivedRoom.parseFitnessRules(result.get(i).getAsJsonObject().getAsJsonArray("fitnessRules"));
+                    }
+                }
+
+                if (trainingRoomByNamespace.containsKey(receivedRoom.ownerName + "-" + nameSpace)) {
+                    TrainingRoom room = trainingRoomByNamespace.get(receivedRoom.ownerName + "-" + nameSpace);
+                    receivedRoom.update(receivedRoom);
+                    trainingRooms[i] = room;
+                } else {
+                    trainingRooms[i] = receivedRoom;
+                    trainingRoomByNamespace.put(receivedRoom.ownerName + "-" + receivedRoom.namespace, receivedRoom);
+                }
             }
 
             return trainingRooms;
@@ -154,8 +173,16 @@ public class ChaosNetClient {
             JsonElement element = doGetRequest(url, true);
 
             TrainingRoom room = gson.fromJson(element, TrainingRoom.class);
-            room.parseFitnessRules(element.getAsJsonObject().getAsJsonArray("fitnessRules"));
 
+            if (element.getAsJsonObject().has("fitnessRules")) {
+                room.parseFitnessRules(element.getAsJsonObject().getAsJsonArray("fitnessRules"));
+            }
+
+            if (trainingRoomByNamespace.containsKey(room.ownerName + "-" + room.namespace)) {
+                return trainingRoomByNamespace.get(room.ownerName + "-" + room.namespace).update(room);
+            }
+
+            trainingRoomByNamespace.put(room.ownerName + "-" + room.namespace, room);
             return room;
         } catch (IOException e) {
             e.printStackTrace();

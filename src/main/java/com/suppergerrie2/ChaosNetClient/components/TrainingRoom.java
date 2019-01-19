@@ -31,7 +31,7 @@ public class TrainingRoom {
     TrainingRoomStats stats = null;
 
     public TrainingRoom(String roomName, String namespace, String simulationModelNamespace) throws IllegalArgumentException {
-        if(roomName==null||namespace==null||simulationModelNamespace==null) {
+        if (roomName == null || namespace == null || simulationModelNamespace == null) {
             throw new IllegalArgumentException("Argument can not be null!");
         }
 
@@ -52,17 +52,17 @@ public class TrainingRoom {
 
     @Override
     public boolean equals(Object other) {
-        if(other == this) return true;
+        if (other == this) return true;
 
-        if(other.getClass() != this.getClass()) {
+        if (other.getClass() != this.getClass()) {
             return false;
         }
 
-        TrainingRoom otherRoom = (TrainingRoom)other;
+        TrainingRoom otherRoom = (TrainingRoom) other;
 
         //Only check config if both objects have configs
-        if(config!=null&&otherRoom.config!=null) {
-            if(!config.equals(otherRoom.config)) {
+        if (config != null && otherRoom.config != null) {
+            if (!config.equals(otherRoom.config)) {
                 return false;
             }
         }
@@ -101,6 +101,40 @@ public class TrainingRoom {
             this.fitnessRules.put(fitnessRule.get("eventType").getAsString(), fitnessRule.get("scoreEffect").getAsDouble());
         }
     }
+
+    public TrainingRoom update(TrainingRoom otherRoom) throws IllegalArgumentException {
+
+        if (!otherRoom.namespace.equals(this.namespace) || !otherRoom.ownerName.equals(this.ownerName)) {
+            throw new IllegalArgumentException("Room cannot be updated by room with different namespace!");
+        }
+
+        if (otherRoom.roomName != null) {
+            this.roomName = otherRoom.roomName;
+        }
+
+        if (otherRoom.partitionNamespace != null) {
+            this.partitionNamespace = otherRoom.partitionNamespace;
+        }
+
+        if (otherRoom.config != null) {
+            this.config = otherRoom.config;
+        }
+
+        if (otherRoom.simulationModelNamespace != null) {
+            this.simulationModelNamespace = simulationModelNamespace;
+        }
+
+        if (otherRoom.fitnessRules != null) {
+            this.fitnessRules = otherRoom.fitnessRules;
+        }
+
+        if (otherRoom.stats != null) {
+            this.stats = otherRoom.stats;
+        }
+
+
+        return this;
+    }
 }
 
 class Config {
@@ -136,4 +170,5 @@ class Config {
                 && maxSurvivingOrganisimsPerSpeciesPerGeneration == ((Config) other).maxSurvivingOrganisimsPerSpeciesPerGeneration
                 && topTaxonomicRank.equals(otherConfig.topTaxonomicRank);
     }
+
 }
