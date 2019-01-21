@@ -253,7 +253,7 @@ public class ChaosNetClient {
             }
 
 
-            JsonElement element = doPostRequest(url, null, true);
+            JsonElement element = doPostRequest(url, body, true);
 
             JsonArray array = element.getAsJsonObject().getAsJsonArray("organisms");
 
