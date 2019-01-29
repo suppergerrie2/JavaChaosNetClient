@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class Session {
 
-    @SerializedName("username")
+    @SerializedName("owner_username")
     private String username;
 
     @SerializedName("namespace")
