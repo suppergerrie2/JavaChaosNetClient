@@ -94,6 +94,15 @@ public class Organism {
         return score;
     }
 
+    /**
+     * Calculates how long the organism has left to live. If it is negative the organisms should die
+     *
+     * @return The amount of life left
+     */
+    public double getLiveLeft() {
+        return timeToLive - System.currentTimeMillis() / 1000D;
+    }
+
     public double getTimeToLive() {
         return timeToLive;
     }

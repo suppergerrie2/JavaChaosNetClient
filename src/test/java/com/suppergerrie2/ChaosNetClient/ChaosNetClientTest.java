@@ -159,8 +159,10 @@ public class ChaosNetClientTest {
         assertNotNull("Organisms were null!", organisms);
         assertTrue("No organisms returned?",organisms.length>0);
 
+        System.out.println("Current time: " + System.currentTimeMillis());
         for(Organism organism : organisms) {
             assertNotNull("Organism was null", organism);
+            System.out.println("Organisms TTL is: " + organism.getTimeToLive() + ", it has " + organism.getLiveLeft() + " seconds left to live");
         }
     }
 }
