@@ -423,14 +423,22 @@ public class ChaosNetClient {
         }
 
         if (con.getResponseCode() == 200) {
-            return new JsonParser().parse(new InputStreamReader(con.getInputStream()));
+
+            System.out.println("----------------------------------------------------------------------------------");
+            System.out.print("Debugging POST Request: ");
+            System.out.println(con.getResponseCode());
+            String result = new BufferedReader(new InputStreamReader(con.getInputStream()))
+                    .lines().collect(Collectors.joining("\n"));
+            System.out.println(result);
+
+            return new JsonParser().parse(result);
         } else {
             System.err.println("----------------------------------------------------------------------------------");
             System.err.print("Failed POST Request: ");
             System.err.println(con.getResponseCode());
-            String result = new BufferedReader(new InputStreamReader(con.getErrorStream()))
+            String errorResponse = new BufferedReader(new InputStreamReader(con.getErrorStream()))
                     .lines().collect(Collectors.joining("\n"));
-            System.err.println(result);
+            System.err.println(errorResponse);
         }
 
         return new JsonObject();
