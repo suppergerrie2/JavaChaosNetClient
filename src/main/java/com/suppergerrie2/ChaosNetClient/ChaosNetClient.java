@@ -362,6 +362,7 @@ public class ChaosNetClient {
     @SuppressWarnings("SameParameterValue")
     private JsonElement doGetRequest(URL url, boolean authorized) throws IOException {
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setUseCaches(false);
         con.setRequestMethod("GET");
 
         if (authorized) {
@@ -408,6 +409,7 @@ public class ChaosNetClient {
      */
     public JsonElement doPostRequest(URL url, JsonObject body, boolean authorized) throws IOException {
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setUseCaches(false);
         con.setRequestMethod("POST");
 
         if (authorized) {
