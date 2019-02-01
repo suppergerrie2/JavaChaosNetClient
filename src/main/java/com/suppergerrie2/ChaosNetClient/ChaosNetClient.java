@@ -360,7 +360,7 @@ public class ChaosNetClient {
      * @author suppergerrie2
      */
     @SuppressWarnings("SameParameterValue")
-    private JsonElement doGetRequest(URL url, boolean authorized) throws IOException {
+    public JsonElement doGetRequest(URL url, boolean authorized) throws IOException {
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setUseCaches(false);
         con.setRequestMethod("GET");
