@@ -41,14 +41,14 @@ public class Authentication {
                 //Error!
                 return null;
             } else {
-                return requestAuthToken(username, refreshToken);
+                requestAuthToken(username, refreshToken);
             }
         }
 
         return accessToken;
     }
 
-    public String requestAuthToken(String username, String refreshToken) {
+    public void requestAuthToken(String username, String refreshToken) {
         try {
             URL url = new URL(Constants.HOST + "/v0/auth/token");
 
@@ -67,8 +67,6 @@ public class Authentication {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        return null;
     }
 
     /**
