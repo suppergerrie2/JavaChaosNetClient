@@ -44,4 +44,9 @@ public abstract class AbstractNeuron {
     double sigmoid(double in) {
         return (1) / (1 + Math.exp(-in));
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getName() + ": " + id + ", " + dependencies.length;
+    }
 }
