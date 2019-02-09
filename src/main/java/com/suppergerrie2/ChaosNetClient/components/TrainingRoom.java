@@ -1,10 +1,13 @@
 package com.suppergerrie2.ChaosNetClient.components;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TrainingRoom {
 
@@ -26,7 +29,7 @@ public class TrainingRoom {
     @SerializedName("simModelNamespace")
     public String simulationModelNamespace;
 
-    transient HashMap<String, Double> fitnessRules = new HashMap<>();
+    transient List<FitnessRule> fitnessRules = new ArrayList<>();
 
     TrainingRoomStats stats = null;
 
@@ -82,8 +85,16 @@ public class TrainingRoom {
         return stats;
     }
 
-    public double getScoreEffect(String event) {
-        return this.fitnessRules.containsKey(event) ? this.fitnessRules.get(event) : 0;
+    public List<FitnessRule> getFitnessRules(String event) {
+
+        List<FitnessRule> validRules = new ArrayList<>();
+        for (FitnessRule fitnessRule : this.fitnessRules) {
+            if (fitnessRule.eventType.equals(event)) {
+                validRules.add(fitnessRule);
+            }
+        }
+
+        return validRules;
     }
 
     public void parseFitnessRules(JsonArray fitnessRules) {
@@ -93,12 +104,17 @@ public class TrainingRoom {
         }
 
         if (this.fitnessRules == null) {
-            this.fitnessRules = new HashMap<>();
+            this.fitnessRules = new ArrayList<>();
+        } else {
+            this.fitnessRules.clear();
         }
 
         for (int i = 0; i < fitnessRules.size(); i++) {
             JsonObject fitnessRule = fitnessRules.get(i).getAsJsonObject();
-            this.fitnessRules.put(fitnessRule.get("eventType").getAsString(), fitnessRule.get("scoreEffect").getAsDouble());
+
+            Gson gson = new GsonBuilder().create();
+
+            this.fitnessRules.add(gson.fromJson(fitnessRule, FitnessRule.class));
         }
     }
 
