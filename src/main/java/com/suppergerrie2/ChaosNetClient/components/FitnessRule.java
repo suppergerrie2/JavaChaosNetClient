@@ -19,4 +19,23 @@ public class FitnessRule {
     @SerializedName("attributeValue")
     String attributeValue;
 
+    public String getEventType() {
+        return eventType;
+    }
+
+    public double getScoreEffect() {
+        return scoreEffect;
+    }
+
+    public double getLiveEffect() {
+        return liveEffect;
+    }
+
+    public String getAttributeID() {
+        return attributeID;
+    }
+
+    public String getAttributeValue() {
+        return attributeValue;
+    }
 }
