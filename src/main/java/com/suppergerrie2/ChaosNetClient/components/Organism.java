@@ -48,6 +48,22 @@ public class Organism {
     @SerializedName("ttl")
     private double timeToLive;
 
+    public Organism(String trainingRoomNamespace, String namespace, String name, int generation, String ownerUsername, String speciesNamespace, NeuralNetwork neuralNetwork, double score, double timeToLive) {
+        this.trainingRoomNamespace = trainingRoomNamespace;
+        this.namespace = namespace;
+        this.name = name;
+        this.generation = generation;
+        this.ownerUsername = ownerUsername;
+        this.speciesNamespace = speciesNamespace;
+        this.neuralNetwork = neuralNetwork;
+        this.score = score;
+        this.timeToLive = timeToLive;
+    }
+
+    public Organism() {
+
+    }
+
     public void setNetwork(NeuralNetwork neuralNetwork) {
         if(this.neuralNetwork!=null) {
             System.out.println("Override neuralnetwork, this is probably a bug!");

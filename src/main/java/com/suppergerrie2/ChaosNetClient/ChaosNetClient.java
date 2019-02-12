@@ -123,7 +123,7 @@ public class ChaosNetClient {
      * @return An array of {@link TrainingRoom} with all of the trainingrooms found.
      * @author suppergerrie2
      */
-    @SuppressWarnings("WeakerAccess")
+    @Deprecated
     public TrainingRoom[] getTrainingRooms() {
         try {
             JsonArray result = doGetRequest(new URL(Constants.HOST + "/v0/trainingrooms"), false).getAsJsonArray();
