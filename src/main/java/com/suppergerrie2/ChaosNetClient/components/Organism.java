@@ -45,6 +45,9 @@ public class Organism {
     @SerializedName("score")
     private double score;
 
+    //Amount of time for the simulation to run, not to be confused with tileToLive, which is the time this organism lives in the DB
+    public double liveLeft;
+
     @SerializedName("ttl")
     private double timeToLive;
 
@@ -125,5 +128,9 @@ public class Organism {
 
     public void increaseScore(double amount) {
         score += amount;
+    }
+
+    public void increaseLive(double amount) {
+        liveLeft += amount;
     }
 }
