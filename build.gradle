@@ -19,7 +19,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'com.suppergerrie2.chaosnetclient'
             artifactId = 'chaosnetclient'
-            version = '1.0'
+            version = '1.1'
 
             from components.java
         }

@@ -11,6 +11,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 
 public class FileHelper {
@@ -49,5 +50,14 @@ public class FileHelper {
         }
 
         Files.write(path, Collections.singleton(jsonString));
+    }
+
+    public void appendToFile(String filename, String text) throws IOException {
+        File file = rootFolder.resolve(filename).toFile();
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+
+        Files.write(file.toPath(), Collections.singletonList(text), StandardOpenOption.APPEND);
     }
 }

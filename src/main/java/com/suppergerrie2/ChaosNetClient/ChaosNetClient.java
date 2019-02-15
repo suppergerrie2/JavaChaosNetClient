@@ -33,6 +33,8 @@ public class ChaosNetClient {
     private boolean saveRefreshToken;
     private boolean saveSessions = true;
 
+    private boolean enableDebugLog = false;
+
     FileHelper fileHelper;
 
     {
@@ -82,6 +84,11 @@ public class ChaosNetClient {
         this.auth = gson.fromJson(response, Authentication.class).setClient(this).setUserName(username);
 
         saveRefreshCode();
+    }
+
+    public ChaosNetClient enableDebugLog() {
+        this.enableDebugLog = true;
+        return this;
     }
 
     public void saveRefreshCode() {
@@ -370,7 +377,13 @@ public class ChaosNetClient {
         }
 
         if (con.getResponseCode() == 200) {
-            return new JsonParser().parse(new InputStreamReader(con.getInputStream()));
+            String result = new BufferedReader(new InputStreamReader(con.getInputStream()))
+                    .lines().collect(Collectors.joining("\n"));
+            System.out.println(result);
+            if (enableDebugLog)
+                fileHelper.appendToFile("debug.log", con.getRequestMethod() + "::" + con.getResponseCode() + "::" + result);
+
+            return new JsonParser().parse(result);
         } else {
             System.err.println("----------------------------------------------------------------------------------");
             System.err.print("Failed GET Request: ");
@@ -378,6 +391,9 @@ public class ChaosNetClient {
             String result = new BufferedReader(new InputStreamReader(con.getErrorStream()))
                     .lines().collect(Collectors.joining("\n"));
             System.err.println(result);
+            if (enableDebugLog)
+                fileHelper.appendToFile("debug.log", con.getRequestMethod() + "::" + con.getResponseCode() + "::" + result);
+
         }
 
         return new JsonObject();
@@ -430,6 +446,8 @@ public class ChaosNetClient {
             String result = new BufferedReader(new InputStreamReader(con.getInputStream()))
                     .lines().collect(Collectors.joining("\n"));
             System.out.println(result);
+            if (enableDebugLog)
+                fileHelper.appendToFile("debug.log", con.getRequestMethod() + "::" + con.getResponseCode() + "::" + (body == null ? "" : body.toString()) + "::" + result);
 
             return new JsonParser().parse(result);
         } else {
@@ -439,6 +457,9 @@ public class ChaosNetClient {
             String errorResponse = new BufferedReader(new InputStreamReader(con.getErrorStream()))
                     .lines().collect(Collectors.joining("\n"));
             System.err.println(errorResponse);
+
+            if (enableDebugLog)
+                fileHelper.appendToFile("debug.log", con.getRequestMethod() + "::" + con.getResponseCode() + "::" + (body == null ? "" : body.toString()) + "::" + errorResponse);
         }
 
         return new JsonObject();
