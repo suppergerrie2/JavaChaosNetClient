@@ -51,7 +51,7 @@ public class Organism {
     @SerializedName("ttl")
     private double timeToLive;
 
-    public Organism(String trainingRoomNamespace, String namespace, String name, int generation, String ownerUsername, String speciesNamespace, NeuralNetwork neuralNetwork, double score, double timeToLive) {
+    public Organism(String trainingRoomNamespace, String namespace, String name, int generation, String ownerUsername, String speciesNamespace, NeuralNetwork neuralNetwork, double score, double timeToLive, double liveLeft) {
         this.trainingRoomNamespace = trainingRoomNamespace;
         this.namespace = namespace;
         this.name = name;
@@ -61,6 +61,7 @@ public class Organism {
         this.neuralNetwork = neuralNetwork;
         this.score = score;
         this.timeToLive = timeToLive;
+        this.liveLeft = liveLeft;
     }
 
     public Organism() {
