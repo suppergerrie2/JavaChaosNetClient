@@ -6,6 +6,7 @@ import com.suppergerrie2.ChaosNetClient.components.TrainingRoom;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Random;
 
@@ -164,5 +165,9 @@ public class ChaosNetClientTest {
             assertNotNull("Organism was null", organism);
             System.out.println("Organisms TTL is: " + organism.getTimeToLive() + ", it has " + organism.getLiveLeft() + " seconds left to live");
         }
+
+        Organism organism = client.loadOrganismFromFile(new File("test-organism.json").toPath());
+
+        assertNotNull("Organism failed to load from file!", organism);
     }
 }

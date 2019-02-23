@@ -1,0 +1,146 @@
+{
+  "trainingRoomNamespace": "test",
+  "namespace": "species-test-suppergerrie2-organism-0",
+  "name": "test-0",
+  "generation": 0,
+  "naturalGeneration": 0,
+  "owner_username": "test",
+  "speciesNamespace": "species-test-suppergerrie2",
+  "nNet": {
+    "neurons": [
+      {
+        "$TYPE": "DebugInput",
+        "value": "1",
+        "_base_type": "input",
+        "dependencies": [],
+        "id": "neuron-1"
+      },
+      {
+        "$TYPE": "DebugInput",
+        "value": "1",
+        "_base_type": "input",
+        "dependencies": [],
+        "id": "neuron-2"
+      },
+      {
+        "$TYPE": "CraftOutput",
+        "_base_type": "output",
+        "recipeId": "minecraft:birch_planks",
+        "dependencies": [
+          {
+            "neuronId": "neuron-2",
+            "weight": 1
+          }
+        ],
+        "id": "neuron-3"
+      },
+      {
+        "$TYPE": "CraftOutput",
+        "_base_type": "output",
+        "recipeId": "minecraft:crafting_table",
+        "dependencies": [
+          {
+            "neuronId": "neuron-2",
+            "weight": 1
+          }
+        ],
+        "id": "neuron-4"
+      },
+      {
+        "$TYPE": "PlaceBlockOutput",
+        "_base_type": "output",
+        "attributeId": "BLOCK_ID",
+        "attributeValue": "minecraft:crafting_table",
+        "dependencies": [
+          {
+            "neuronId": "neuron-2",
+            "weight": 1
+          }
+        ],
+        "id": "neuron-5"
+      },
+      {
+        "$TYPE": "AttackOutput",
+        "_base_type": "output",
+        "dependencies": [
+          {
+            "neuronId": "neuron-2",
+            "weight": 1
+          }
+        ],
+        "id": "neuron-6"
+      }
+    ],
+    "biology": {
+      "Eye": [
+        {
+          "$TYPE": "Eye",
+          "$COUNT": 5,
+          "index": "0",
+          "positionRange": {
+            "minX": -4,
+            "minY": 0,
+            "minZ": 9,
+            "maxX": -1,
+            "maxY": 4,
+            "maxZ": 10
+          }
+        },
+        {
+          "$TYPE": "Eye",
+          "$COUNT": 5,
+          "index": "1",
+          "positionRange": {
+            "minX": 4,
+            "minY": -1,
+            "minZ": -6,
+            "maxX": 5,
+            "maxY": 1,
+            "maxZ": 2
+          }
+        },
+        {
+          "$TYPE": "Eye",
+          "$COUNT": 5,
+          "index": "2",
+          "positionRange": {
+            "minX": 1,
+            "minY": 7,
+            "minZ": 9,
+            "maxX": 3,
+            "maxY": 9,
+            "maxZ": 10
+          }
+        },
+        {
+          "$TYPE": "Eye",
+          "$COUNT": 5,
+          "index": "3",
+          "positionRange": {
+            "minX": 7,
+            "minY": -7,
+            "minZ": -8,
+            "maxX": 8,
+            "maxY": 5,
+            "maxZ": 1
+          }
+        },
+        {
+          "$TYPE": "Eye",
+          "$COUNT": 5,
+          "index": "4",
+          "positionRange": {
+            "minX": 8,
+            "minY": -7,
+            "minZ": -6,
+            "maxX": 9,
+            "maxY": -3,
+            "maxZ": -4
+          }
+        }
+      ]
+    }
+  },
+  "score": 0,
+  "ttl": 1550700955.809
+}

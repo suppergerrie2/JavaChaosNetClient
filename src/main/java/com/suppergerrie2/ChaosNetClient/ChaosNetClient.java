@@ -11,6 +11,7 @@ import com.suppergerrie2.ChaosNetClient.components.nnet.neurons.OutputNeuron;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -281,6 +282,21 @@ public class ChaosNetClient {
         }
 
         return null;
+    }
+
+    public Organism loadOrganismFromFile(Path filePath) throws FileNotFoundException {
+        File file = filePath.toFile();
+        if (!file.exists()) {
+            return null;
+        }
+
+        JsonObject object = new JsonParser().parse(new FileReader(file)).getAsJsonObject();
+
+        Organism organism = gson.fromJson(object, organismToUse.getClass());
+        parseNeuralNetwork(organism, object.getAsJsonObject("nNet"));
+        organism.parseBiologyFromJson(object.getAsJsonObject("nNet").getAsJsonObject("biology"));
+
+        return organism;
     }
 
     private void parseNeuralNetwork(Organism organism, JsonObject neuralNetwork) {
